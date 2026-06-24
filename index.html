@@ -2,45 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CineLog Pro v1.0</title>
+    <title>CineLog Ultimate Notion Style</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        .theme-cherry-blossom { background: linear-gradient(rgba(12, 8, 20, 0.88), rgba(20, 12, 32, 0.92)); }
+        :root { --bg: #0f172a; --glass: rgba(255, 255, 255, 0.05); }
+        .theme-midnight { background: radial-gradient(circle, #1e1b4b, #020617); }
+        .theme-cherry { background: radial-gradient(circle, #4c0519, #0f0505); }
+        .theme-cyber { background: radial-gradient(circle, #064e3b, #020617); }
+        .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        body { transition: background 0.5s ease; }
     </style>
 </head>
-<body class="theme-cherry-blossom min-h-screen text-white p-6">
-    
-    <!-- UI Layout -->
-    <div class="max-w-5xl mx-auto">
-        <h1 class="text-3xl font-bold mb-6 text-pink-300">CineLog Ultimate v1.1</h1>
+<body class="theme-midnight min-h-screen text-white p-4 md:p-8">
 
-        <!-- INPUT SECTION -->
-        <div class="bg-zinc-900 p-6 rounded-xl border border-white/10 mb-8">
-            <input type="hidden" id="editId">
-            <div class="grid grid-cols-2 gap-4">
-                <input id="title" placeholder="Title" class="bg-black p-3 rounded border border-white/10">
-                <select id="type" class="bg-black p-3 rounded border border-white/10">
-                    <option>Movie</option>
-                    <option>Web Series</option>
-                </select>
-                <input id="rating" type="number" placeholder="Rating" class="bg-black p-3 rounded border border-white/10">
-                <input id="status" placeholder="Status" class="bg-black p-3 rounded border border-white/10">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-4xl font-extrabold tracking-tight">CineLog <span class="text-pink-500">v3.0</span></h1>
+            <div class="flex gap-2">
+                <button onclick="setTheme('theme-midnight')" class="w-8 h-8 rounded-full bg-indigo-900"></button>
+                <button onclick="setTheme('theme-cherry')" class="w-8 h-8 rounded-full bg-red-900"></button>
+                <button onclick="setTheme('theme-cyber')" class="w-8 h-8 rounded-full bg-emerald-900"></button>
             </div>
-            <button onclick="saveEntry()" id="saveBtn" class="w-full mt-4 bg-pink-600 py-3 rounded font-bold">ADD ENTRY</button>
         </div>
 
-        <!-- TABLE -->
-        <table class="w-full text-left">
-            <thead><tr class="text-gray-400 border-b border-white/10">
-                <th class="p-3">Title</th><th class="p-3">Rating</th><th class="p-3">Status</th><th class="p-3">Action</th>
-            </tr></thead>
-            <tbody id="list"></tbody>
-        </table>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-1 glass p-6 rounded-2xl h-fit">
+                <h2 class="text-xl font-bold mb-4"><i class="fas fa-plus-circle mr-2"></i>Add Media</h2>
+                <input type="hidden" id="editId">
+                <div class="space-y-3">
+                    <input id="title" placeholder="Title" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none focus:border-pink-500">
+                    <select id="type" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+                        <option>Movie</option><option>Web Series</option>
+                    </select>
+                    <input id="rating" type="number" placeholder="Rating (1-10)" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+                    <input id="status" placeholder="Status (e.g. Watched)" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+                    <input id="prequel" placeholder="Prequel" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+                    <input id="nextDate" type="date" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+                </div>
+                <button onclick="saveEntry()" id="saveBtn" class="w-full mt-6 bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 transition">SAVE ENTRY</button>
+            </div>
+
+            <div class="lg:col-span-3 glass p-6 rounded-2xl">
+                <table class="w-full text-left">
+                    <thead><tr class="text-gray-400 border-b border-white/10">
+                        <th class="p-4">Title</th><th class="p-4">Rating</th><th class="p-4">Status</th><th class="p-4">Date</th><th class="p-4">Action</th>
+                    </tr></thead>
+                    <tbody id="list"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <script>
         let data = JSON.parse(localStorage.getItem('my_data')) || [];
+
+        function setTheme(c) { document.body.className = c + " min-h-screen text-white p-4 md:p-8"; }
 
         function saveEntry() {
             const id = document.getElementById('editId').value;
@@ -49,7 +66,9 @@
                 title: document.getElementById('title').value,
                 type: document.getElementById('type').value,
                 rating: document.getElementById('rating').value,
-                status: document.getElementById('status').value
+                status: document.getElementById('status').value,
+                prequel: document.getElementById('prequel').value,
+                nextDate: document.getElementById('nextDate').value
             };
             
             if(id) { data = data.map(i => i.id == id ? entry : i); } 
@@ -61,11 +80,12 @@
 
         function render() {
             document.getElementById('list').innerHTML = data.map(i => `
-                <tr class="border-b border-white/5 hover:bg-white/5 cursor-pointer" onclick="editEntry(${i.id})">
-                    <td class="p-3">${i.title}</td>
-                    <td class="p-3">${i.rating || '-'}</td>
-                    <td class="p-3">${i.status || '-'}</td>
-                    <td class="p-3 text-red-400" onclick="event.stopPropagation(); del(${i.id})"><i class="fas fa-trash"></i></td>
+                <tr class="border-b border-white/5 hover:bg-white/5 transition cursor-pointer" onclick="editEntry(${i.id})">
+                    <td class="p-4">${i.title}</td>
+                    <td class="p-4 text-pink-400">${i.rating || '-'}</td>
+                    <td class="p-4">${i.status || '-'}</td>
+                    <td class="p-4">${i.nextDate || '-'}</td>
+                    <td class="p-4 text-red-400 hover:text-red-300" onclick="event.stopPropagation(); del(${i.id})"><i class="fas fa-trash"></i></td>
                 </tr>
             `).join('');
         }
@@ -76,14 +96,15 @@
             document.getElementById('title').value = i.title;
             document.getElementById('rating').value = i.rating;
             document.getElementById('status').value = i.status;
+            document.getElementById('prequel').value = i.prequel;
+            document.getElementById('nextDate').value = i.nextDate;
             document.getElementById('saveBtn').innerText = "UPDATE ENTRY";
-            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
             document.getElementById('editId').value = '';
             document.getElementById('title').value = '';
-            document.getElementById('saveBtn').innerText = "ADD ENTRY";
+            document.getElementById('saveBtn').innerText = "SAVE ENTRY";
         }
 
         function del(id) {
