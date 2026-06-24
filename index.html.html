@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineLog Ultimate v6.1 | Unified Media Core</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        /* Premium Floral Matrix Wallpapers */
+        .theme-cherry-blossom { 
+            background-image: linear-gradient(rgba(12, 8, 20, 0.88), rgba(20, 12, 32, 0.92)), url('https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&w=1600&q=80'); 
+            color: #ffd6e8;
+        }
+        .theme-midnight-orchid { 
+            background-image: linear-gradient(rgba(6, 12, 26, 0.9), rgba(12, 6, 32, 0.94)), url('https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1600&q=80'); 
+            color: #d8b4fe;
+        }
+        .theme-cyber-lotus { 
+            background-image: linear-gradient(rgba(6, 6, 14, 0.88), rgba(8, 20, 20, 0.92)), url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=1600&q=80'); 
+            color: #a7f3d0;
+        }
+        
+        /* High-Grade Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 11, 28, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.3s ease;
+        }
+
+        .edit-active-glow {
+            border-color: rgba(236, 72, 153, 0.6) !important;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.3) !important;
+        }
+        
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 20px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+    </style>
+</head>
+<body class="theme-cherry-blossom min-h-screen selection:bg-pink-500/30">
+
+    <div class="min-h-screen pb-16">
+        
+        <div class="border-b border-white/5 bg-black/60 px-6 py-4 flex flex-wrap gap-4 items-center justify-between backdrop-blur-md">
+            <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-widest flex items-center gap-1.5 opacity-80">
+                    <i class="fa-solid fa-wand-magic-sparkles text-pink-400"></i> Matrix Aesthetics:
+                </span>
+                <button onclick="changeTheme('cherry-blossom')" class="px-4 py-1.5 text-xs rounded-full bg-pink-500/10 text-pink-300 border border-pink-500/30 transition-all font-medium">🌸 Cherry Blossom</button>
+                <button onclick="changeTheme('midnight-orchid')" class="px-4 py-1.5 text-xs rounded-full bg-purple-500/10 text-purple-300 border border-transparent hover:border-purple-500/30 transition-all font-medium">🔮 Midnight Orchid</button>
+                <button onclick="changeTheme('cyber-lotus')" class="px-4 py-1.5 text-xs rounded-full bg-emerald-500/10 text-emerald-300 border border-transparent hover:border-emerald-500/30 transition-all font-medium">🌿 Cyber Lotus</button>
+            </div>
+            
+            <div class="flex gap-2">
+                <button onclick="triggerExport()" class="bg-white/5 text-xs px-4 py-2 rounded-full text-white/90 border border-white/10 hover:bg-white/10 transition-all font-medium">
+                    <i class="fa-solid fa-cloud-arrow-down mr-1.5"></i> Export Backup
+                </button>
+                <button onclick="document.getElementById('importFile').click()" class="bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs px-5 py-2 rounded-full font-bold shadow-lg shadow-pink-500/20 transition-all hover:opacity-95">
+                    <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Import Backup (.json)
+                </button>
+                <input type="file" id="importFile" class="hidden" accept=".json" onchange="triggerImport(event)">
+            </div>
+        </div>
+
+        <header class="max-w-[95%] mx-auto pt-10 pb-6">
+            <div class="flex items-center gap-5">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-400 to-purple-600 flex items-center justify-center text-white text-2xl shadow-xl shadow-pink-500/20">
+                    <i class="fa-solid fa-spa"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                        Movies , Web Series I've Watched And Want To Watch
+                    </h1>
+                    <p class="text-xs sm:text-sm mt-1 font-medium tracking-wide flex items-center gap-2 text-white/70">
+                        <span>Better Movies Have Better Mindset -; Sanidhya Saxena</span> 
+                        <span class="opacity-40">•</span>
+                        <span>CineLog Ultimate Core v6.1</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 mt-8 border-b border-white/5 pb-5 text-xs">
+                <div class="glass-panel px-4 py-2 rounded-full"><span class="font-bold text-white text-sm mr-1" id="statTotal">0</span> <span class="text-white/60">Total Logs Index</span></div>
+                <div class="glass-panel px-4 py-2 rounded-full"><span class="font-bold text-pink-300 text-sm mr-1" id="statTime">0 hrs</span> <span class="text-white/60">Temporal Watch Time</span></div>
+            </div>
+        </header>
+
+        <main class="max-w-[95%] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-8 mt-4">
+            
+            <div id="inputFormContainer" class="xl:col-span-1 glass-panel rounded-3xl p-6 shadow-2xl h-fit">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 id="formPanelTitle" class="text-xs font-bold text-pink-300 uppercase tracking-widest flex items-center gap-2">
+                        <i class="fa-solid fa-circle-dot text-[10px] animate-pulse"></i> Manual Data Input Core
+                    </h2>
+                    <span id="editIndicatorBadge" class="hidden px-2.5 py-0.5 rounded-full text-[9px] bg-pink-500 text-white font-bold tracking-wider uppercase">Editing Mode</span>
+                </div>
+                
+                <form id="mediaForm" onsubmit="saveEntry(event)" class="space-y-4 text-xs">
+                    <input type="hidden" id="entryId">
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Format Category</label>
+                        <select id="itemType" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400 transition-all">
+                            <option value="Movie">🎬 Movie</option>
+                            <option value="Web Series">📺 Web Series</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Title Identity Name</label>
+                        <input type="text" id="itemTitle" required placeholder="e.g. 12th Fail" 
+                               class="w-full bg-black/40 text-white rounded-xl px-4 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400 transition-all placeholder:text-white/20">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">🖼️ Poster Image URL</label>
+                        <input type="url" id="itemPoster" placeholder="https://domain.com/poster.jpg" 
+                               class="w-full bg-black/40 text-white rounded-xl px-4 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400 transition-all placeholder:text-white/20">
+                    </div>
+
+                    <div class="space-y-3 p-3.5 bg-black/30 rounded-2xl border border-white/5">
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label class="block text-pink-300/90 font-semibold mb-1 uppercase tracking-wider">Current Status</label>
+                                <select id="itemCurrentStatus" class="w-full bg-black/40 text-white rounded-xl px-2.5 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                                    <option value="—">—</option>
+                                    <option value="Ongoing">Ongoing</option>
+                                    <option value="In Production">In Production</option>
+                                    <option value="Ended">Ended</option>
+                                    <option value="Series Ended">Series Ended</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-pink-300/90 font-semibold mb-1 uppercase tracking-wider">Upcoming Season/Vol</label>
+                                <input type="text" id="itemUpcomingSeason" placeholder="e.g. Season 2, Part 2" 
+                                       class="w-full bg-black/40 text-white rounded-xl px-2.5 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400 placeholder:text-white/10">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-white/60 font-semibold mb-1 uppercase tracking-wider">Release Date new seson</label>
+                            <input type="date" id="itemReleaseNewSeason" class="w-full bg-black/40 text-white rounded-xl px-2.5 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Runtime (Mins)</label>
+                            <input type="number" id="itemRuntime" placeholder="120" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                        </div>
+                        <div>
+                            <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Launch Year</label>
+                            <input type="number" id="itemYear" placeholder="2026" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Genre Tags (Comma Split)</label>
+                        <input type="text" id="itemGenre" placeholder="Action, Sci-Fi, Thriller" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Watch Status</label>
+                            <select id="itemStatus" class="w-full bg-black/40 text-white rounded-xl px-2 py-2.5 border border-white/10 focus:outline-none">
+                                <option value="Watched">Watched</option>
+                                <option value="Plan to Watch">Plan to Watch</option>
+                                <option value="Watching">Watching</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Platform Tag</label>
+                            <select id="itemPlatform" class="w-full bg-black/40 text-white rounded-xl px-2 py-2.5 border border-white/10 focus:outline-none">
+                                <option value="Netflix">Netflix</option>
+                                <option value="Disney+">Disney+</option>
+                                <option value="Amazon Prime">Amazon Prime</option>
+                                <option value="JioCinema">JioCinema</option>
+                                <option value="Zee5">Zee5</option>
+                                <option value="Other">Other Protocol</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">📅 Watch Date</label>
+                        <input type="date" id="itemWatchDate" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none focus:border-pink-400">
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Evaluation Rating</label>
+                        <select id="itemRating" class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 focus:outline-none">
+                            <option value="10">★★★★★ Excellent (10/10)</option>
+                            <option value="8">★★★★☆ Very Good (8/10)</option>
+                            <option value="6">★★★☆☆ Good (6/10)</option>
+                            <option value="4">★★☆☆☆ Average</option>
+                            <option value="0">Not Rated</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-white/60 font-semibold mb-1.5 uppercase tracking-wider">Personal Logs / Reviews</label>
+                        <textarea id="itemPlot" rows="2" placeholder="Write logs entry context..." class="w-full bg-black/40 text-white rounded-xl px-3 py-2.5 border border-white/10 resize-none focus:outline-none focus:border-pink-400"></textarea>
+                    </div>
+
+                    <div class="pt-3 flex gap-2">
+                        <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-2.5 rounded-xl shadow-lg transition-all hover:opacity-95">Commit Save</button>
+                        <button type="button" onclick="resetForm()" class="px-3.5 bg-black/20 text-white/70 rounded-xl border border-white/10 hover:bg-black/40 transition-colors"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="xl:col-span-3 space-y-5">
+                
+                <div class="flex flex-col sm:flex-row gap-4 items-center justify-between glass-panel p-3.5 rounded-2xl border border-white/5">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-terminal absolute left-3.5 top-3 text-pink-400/60 text-[10px]"></i>
+                        <input type="text" id="searchBar" oninput="renderDashboard()" placeholder="Query logs tracking, genres, platforms..." class="w-full bg-black/40 text-white rounded-xl pl-9 pr-4 py-2 text-xs border border-white/10 focus:outline-none focus:border-pink-400 transition-all">
+                    </div>
+                    <div class="flex gap-1.5 bg-black/40 p-1 rounded-xl border border-white/5">
+                        <button onclick="setFilter('All')" id="filterAll" class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-950 transition-all shadow">All Protocol</button>
+                        <button onclick="setFilter('Watched')" id="filterWatched" class="px-4 py-1.5 rounded-lg text-xs font-medium text-white/60 hover:text-white transition-all">Watched</button>
+                        <button onclick="setFilter('Plan to Watch')" id="filterPlan" class="px-4 py-1.5 rounded-lg text-xs font-medium text-white/60 hover:text-white transition-all">Plan Hub</button>
+                    </div>
+                </div>
+
+                <div class="w-full overflow-x-auto glass-panel border border-white/5 rounded-3xl shadow-2xl">
+                    <table class="w-full text-left border-collapse min-w-[1100px] text-xs">
+                        <thead>
+                            <tr class="border-b border-white/5 bg-black/30 text-white/60 font-semibold uppercase tracking-wider text-[10px]">
+                                <th class="py-4 px-4 w-14 text-center">Action</th>
+                                <th class="py-4 px-4">Media Title / Identity</th>
+                                <th class="py-4 px-4 w-20">Category</th>
+                                <th class="py-4 px-4 w-36">Genre Matrix</th>
+                                <th class="py-4 px-4 w-32">AI Evaluation</th>
+                                <th class="py-4 px-4 w-24">Watch Status</th>
+                                <th class="py-4 px-4 w-32">Watch Date</th>
+                                <th class="py-4 px-4 w-24">Platform</th>
+                                <th class="py-4 px-4 w-44">current status</th>
+                                <th class="py-4 px-4 w-36">Release Date new seson</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableEntriesBody" class="divide-y divide-white/5 text-white/90">
+                            </tbody>
+                    </table>
+                    <div id="emptyState" class="hidden text-center py-16 text-white/40 font-mono">⚠️ [Zero results matching tracking parameters]</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const STORAGE_KEY_V6 = 'cineLogUnifiedData_v8_fresh';
+        let logsData = [];
+
+        function loadSystemData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY_V6);
+                if (raw) {
+                    logsData = JSON.parse(raw);
+                } else {
+                    const legacyKeys = ['cineLogUnifiedData_v7', 'cineLogUnifiedData_v6', 'cineLogUnifiedData_v5', 'cineLogManualData'];
+                    for (let key of legacyKeys) {
+                        let legacyRaw = localStorage.getItem(key);
+                        if (legacyRaw) {
+                            let parsed = JSON.parse(legacyRaw);
+                            if (Array.isArray(parsed) && parsed.length > 0) {
+                                logsData = parsed;
+                                commitDataToStorage();
+                                break;
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error("Data fallback activated.", e);
+                logsData = [];
+            }
+        }
+
+        function commitDataToStorage() {
+            logsData = logsData.map(item => ({
+                id: item.id || Date.now() + Math.random(),
+                title: item.title ? item.title.trim() : "Untitled Identity",
+                poster: item.poster ? item.poster.trim() : "",
+                type: item.type || "Movie",
+                currentStatus: item.currentStatus || "—",
+                upcomingSeason: item.upcomingSeason ? item.upcomingSeason.trim() : "",
+                releaseNewSeason: item.releaseNewSeason || "",
+                runtime: parseInt(item.runtime) || 120,
+                year: parseInt(item.year) || 2026,
+                genre: item.genre || "Drama",
+                status: item.status || "Watched",
+                platform: item.platform || "Netflix",
+                watchDate: item.watchDate || "",
+                rating: parseInt(item.rating) || 0,
+                plot: item.plot || ""
+            }));
+            localStorage.setItem(STORAGE_KEY_V6, JSON.stringify(logsData));
+        }
+
+        let activeFilter = 'All';
+        loadSystemData();
+
+        window.addEventListener('DOMContentLoaded', () => { renderDashboard(); });
+
+        function changeTheme(themeName) { document.body.className = `theme-${themeName} min-h-screen`; }
+
+        function setFilter(filter) {
+            activeFilter = filter;
+            ['All', 'Watched', 'Plan to Watch'].forEach(k => {
+                const btn = document.getElementById(k === 'All' ? 'filterAll' : k === 'Watched' ? 'filterWatched' : 'filterPlan');
+                if(btn) {
+                    btn.className = k === filter 
+                        ? "px-4 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-950 transition-all shadow" 
+                        : "px-4 py-1.5 rounded-lg text-xs font-medium text-white/60 hover:text-white transition-all";
+                }
+            });
+            renderDashboard();
+        }
+
+        function saveEntry(e) {
+            e.preventDefault();
+            const id = document.getElementById('entryId').value;
+            const titleStr = document.getElementById('itemTitle').value.trim();
+            
+            let targetId = id ? parseFloat(id) : null;
+            if(!targetId) {
+                const match = logsData.find(x => x.title.toLowerCase() === titleStr.toLowerCase());
+                if(match) targetId = match.id;
+            }
+
+            const record = {
+                id: targetId || Date.now(),
+                title: titleStr,
+                poster: document.getElementById('itemPoster').value.trim(), 
+                type: document.getElementById('itemType').value,
+                currentStatus: document.getElementById('itemCurrentStatus').value,
+                upcomingSeason: document.getElementById('itemUpcomingSeason').value.trim(),
+                releaseNewSeason: document.getElementById('itemReleaseNewSeason').value,
+                runtime: parseInt(document.getElementById('itemRuntime').value) || 120,
+                year: parseInt(document.getElementById('itemYear').value) || 2026,
+                genre: document.getElementById('itemGenre').value.trim() || "Drama",
+                status: document.getElementById('itemStatus').value,
+                platform: document.getElementById('itemPlatform').value,
+                watchDate: document.getElementById('itemWatchDate').value || "", 
+                rating: parseInt(document.getElementById('itemRating').value) || 0,
+                plot: document.getElementById('itemPlot').value.trim()
+            };
+
+            if(targetId) logsData = logsData.map(item => item.id === targetId ? record : item);
+            else logsData.unshift(record);
+
+            commitDataToStorage();
+            resetForm();
+            renderDashboard();
+        }
+
+        function editEntry(id) {
+            const target = logsData.find(item => item.id === id);
+            if(!target) return;
+            
+            document.getElementById('entryId').value = target.id;
+            document.getElementById('itemTitle').value = target.title;
+            document.getElementById('itemPoster').value = target.poster || "";
+            document.getElementById('itemType').value = target.type;
+            
+            document.getElementById('itemCurrentStatus').value = target.currentStatus || "—";
+            document.getElementById('itemUpcomingSeason').value = target.upcomingSeason || "";
+            document.getElementById('itemReleaseNewSeason').value = target.releaseNewSeason || "";
+            
+            document.getElementById('itemRuntime').value = target.runtime;
+            document.getElementById('itemYear').value = target.year;
+            document.getElementById('itemGenre').value = target.genre;
+            document.getElementById('itemStatus').value = target.status;
+            document.getElementById('itemPlatform').value = target.platform || "Netflix";
+            document.getElementById('itemWatchDate').value = target.watchDate || "";
+            document.getElementById('itemRating').value = target.rating;
+            document.getElementById('itemPlot').value = target.plot;
+
+            const formContainer = document.getElementById('inputFormContainer');
+            formContainer.classList.add('edit-active-glow');
+            document.getElementById('formPanelTitle').innerHTML = `<i class="fa-solid fa-user-pen text-[10px] text-pink-400"></i> Updating Entry Data Matrix`;
+            document.getElementById('editIndicatorBadge').classList.remove('hidden');
+            document.getElementById('submitBtn').innerText = "Apply Engine Fixes";
+            
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function deleteEntry(id) {
+            if(confirm("Expunge record from system database?")) {
+                logsData = logsData.filter(item => item.id !== id);
+                commitDataToStorage();
+                renderDashboard();
+            }
+        }
+
+        function resetForm() { 
+            document.getElementById('mediaForm').reset(); 
+            document.getElementById('entryId').value = ""; 
+            document.getElementById('inputFormContainer').classList.remove('edit-active-glow');
+            document.getElementById('formPanelTitle').innerHTML = `<i class="fa-solid fa-circle-dot text-[10px] animate-pulse"></i> Manual Data Input Core`;
+            document.getElementById('editIndicatorBadge').classList.add('hidden');
+            document.getElementById('submitBtn').innerText = "Commit Save";
+        }
+
+        function formatDateString(str) {
+            if(!str) return "";
+            const opts = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(str).toLocaleDateString('en-US', opts);
+        }
+
+        function renderDashboard() {
+            const tbody = document.getElementById('tableEntriesBody');
+            const emptyState = document.getElementById('emptyState');
+            const searchVal = document.getElementById('searchBar').value.toLowerCase();
+
+            let filtered = logsData.filter(item => 
+                (item.title.toLowerCase().includes(searchVal) || item.genre.toLowerCase().includes(searchVal) || (item.platform || '').toLowerCase().includes(searchVal)) && 
+                (activeFilter === 'All' ? true : item.status === activeFilter)
+            );
+
+            const watched = logsData.filter(x => x.status === 'Watched');
+            document.getElementById('statTotal').innerText = logsData.length;
+            document.getElementById('statTime').innerText = `${Math.round(watched.reduce((a, c) => a + (c.runtime || 0), 0) / 60)} hrs`;
+
+            if(filtered.length === 0) { tbody.innerHTML = ""; emptyState.classList.remove('hidden'); return; }
+            emptyState.classList.add('hidden');
+
+            tbody.innerHTML = filtered.map(item => {
+                const typeClass = item.type === 'Movie' ? 'bg-amber-400/10 text-amber-300 border border-amber-500/20' : 'bg-purple-400/10 text-purple-300 border border-purple-500/20';
+                const statusClass = item.status === 'Watched' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/5 text-white/40';
+                
+                const plat = item.platform || 'Netflix';
+                let platClass = 'bg-red-500/10 text-red-300 border border-red-500/10';
+                if(plat === 'Disney+') platClass = 'bg-blue-600/20 text-blue-300 border border-blue-500/10';
+                if(plat === 'Amazon Prime') platClass = 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/10';
+                if(plat === 'JioCinema') platClass = 'bg-pink-500/20 text-pink-300 border border-pink-500/10';
+
+                let starText = "Not Rated";
+                if(item.rating === 10) starText = "<span class='text-pink-300'>★★★★★ Excellent</span>";
+                if(item.rating === 8) starText = "<span class='text-purple-300'>★★★★☆ Very Good</span>";
+                if(item.rating === 6) starText = "<span class='text-amber-300'>★★★☆☆ Good</span>";
+
+                const genreBadges = (item.genre || "Drama").split(',').map(g => {
+                    return `<span class="bg-black/40 text-white/80 px-2.5 py-1 rounded-full text-[10px] font-medium mr-1 border border-white/5 inline-block">${g.trim()}</span>`;
+                }).join('');
+
+                // FIXED IMAGE PARSER: Guaranteed to show image from the provided link
+                const posterImgHtml = (item.poster && item.poster.startsWith('http'))
+                    ? `<img src="${item.poster}" class="w-9 h-12 object-cover rounded-lg border border-white/10 shadow-md transition-transform hover:scale-150 hover:z-50" onerror="this.src='https://placehold.co/150x200/120814/ffffff?text=📽️'">`
+                    : `<div class="w-9 h-12 bg-black/40 rounded-lg border border-white/5 flex items-center justify-center text-white/30 text-[11px] font-mono">📽️</div>`;
+
+                const curStatus = item.currentStatus || '—';
+                const upSeason = item.upcomingSeason ? item.upcomingSeason.trim() : '';
+                
+                let curStatusHtml = '—';
+                if(curStatus !== '—') {
+                    let badgeColor = 'bg-slate-500/20 text-slate-300';
+                    if(curStatus === 'Ended' || curStatus === 'Series Ended') badgeColor = 'bg-amber-600/20 text-amber-300 border border-amber-500/10';
+                    if(curStatus === 'Ongoing') badgeColor = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/10';
+                    if(curStatus === 'In Production') badgeColor = 'bg-blue-500/20 text-blue-300 border border-blue-500/10';
+                    
+                    const appendText = upSeason ? ` <span class="text-[9px] opacity-90 text-white bg-white/15 px-2 py-0.5 rounded font-mono ml-1 border border-white/5">${upSeason}</span>` : '';
+                    curStatusHtml = `<div class="flex items-center flex-wrap gap-1"><span class="px-2.5 py-1 rounded-md text-[10px] font-medium ${badgeColor}">${curStatus}</span>${appendText}</div>`;
+                }
+
+                return `
+                    <tr class="hover:bg-white/5 group transition-all">
+                        <td class="py-3.5 px-4 text-center">
+                            <div class="flex gap-2 justify-center opacity-40 group-hover:opacity-100 transition-opacity">
+                                <button onclick="editEntry(${item.id})" class="text-pink-300 hover:text-white p-1"><i class="fa-solid fa-pen text-[11px]"></i></button>
+                                <button onclick="deleteEntry(${item.id})" class="text-white/40 hover:text-red-400 p-1"><i class="fa-solid fa-trash text-[11px]"></i></button>
+                            </div>
+                        </td>
+                        <td onclick="editEntry(${item.id})" class="py-3.5 px-4 font-bold text-white tracking-wide text-sm cursor-pointer hover:text-pink-300 transition-colors">
+                            <div class="flex items-center gap-3.5">
+                                ${posterImgHtml}
+                                <div>
+                                    <span class="block">${item.title}</span>
+                                    <span class="text-[10px] text-white/40 font-normal block mt-0.5">(${item.year})</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium ${typeClass}">${item.type}</span></td>
+                        <td class="py-3.5 px-4">${genreBadges}</td>
+                        <td class="py-3.5 px-4 font-medium">${starText}</td>
+                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full font-medium text-[10px] ${statusClass}">${item.status}</span></td>
+                        <td class="py-3.5 px-4 text-white/80 font-medium">${formatDateString(item.watchDate) || '—'}</td>
+                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${platClass}">${plat}</span></td>
+                        <td class="py-3.5 px-4 font-medium">${curStatusHtml}</td>
+                        <td class="py-3.5 px-4 font-mono text-[11px] text-white/70">${formatDateString(item.releaseNewSeason) || '—'}</td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function triggerExport() { if(logsData.length === 0) return; const blob = new Blob([JSON.stringify(logsData, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `CineLog_Ultimate_Master_Backup.json`; a.click(); }
+        
+        function triggerImport(event) {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if(Array.isArray(parsed)) {
+                        logsData = parsed;
+                        commitDataToStorage();
+                        renderDashboard();
+                        alert("🚀 System Synced! Posters fix ho gaye hain aur data load ho chuka hai.");
+                    } else { alert("Error: JSON File me direct Array data matrix nahi mila."); }
+                } catch(err) { alert("Invalid JSON standard detected."); }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
