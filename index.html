@@ -2,62 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CineLog Ultimate Notion Style</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineLog Ultimate | Enterprise Grade Media Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --bg: #0f172a; --glass: rgba(255, 255, 255, 0.05); }
+        /* CSS Engine for Glassmorphism & Themes */
+        :root { --glass: rgba(255, 255, 255, 0.05); }
         .theme-midnight { background: radial-gradient(circle, #1e1b4b, #020617); }
         .theme-cherry { background: radial-gradient(circle, #4c0519, #0f0505); }
         .theme-cyber { background: radial-gradient(circle, #064e3b, #020617); }
-        .glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        body { transition: background 0.5s ease; }
+        
+        .glass-panel { 
+            background: var(--glass); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.37);
+        }
+        
+        /* Smooth transition for theme switching */
+        body { transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Custom Scrollbar for heavy data */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
-<body class="theme-midnight min-h-screen text-white p-4 md:p-8">
+<body class="theme-midnight min-h-screen text-white p-6 md:p-12">
 
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
-            <h1 class="text-4xl font-extrabold tracking-tight">CineLog <span class="text-pink-500">v3.0</span></h1>
-            <div class="flex gap-2">
-                <button onclick="setTheme('theme-midnight')" class="w-8 h-8 rounded-full bg-indigo-900"></button>
-                <button onclick="setTheme('theme-cherry')" class="w-8 h-8 rounded-full bg-red-900"></button>
-                <button onclick="setTheme('theme-cyber')" class="w-8 h-8 rounded-full bg-emerald-900"></button>
+    <div class="max-w-7xl mx-auto">
+        <header class="flex justify-between items-center mb-12">
+            <div>
+                <h1 class="text-5xl font-black tracking-tighter mb-2">CineLog <span class="text-pink-500">Ultimate</span></h1>
+                <p class="text-gray-400">Professional Media Tracking & Analytics Core</p>
             </div>
-        </div>
+            <div class="glass-panel p-2 rounded-full flex gap-2">
+                <button onclick="setTheme('theme-midnight')" class="w-8 h-8 rounded-full bg-indigo-900 border-2 border-white/20"></button>
+                <button onclick="setTheme('theme-cherry')" class="w-8 h-8 rounded-full bg-red-900 border-2 border-white/20"></button>
+                <button onclick="setTheme('theme-cyber')" class="w-8 h-8 rounded-full bg-emerald-900 border-2 border-white/20"></button>
+            </div>
+        </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            <div class="lg:col-span-1 glass p-6 rounded-2xl h-fit">
-                <h2 class="text-xl font-bold mb-4"><i class="fas fa-plus-circle mr-2"></i>Add Media</h2>
-                <input type="hidden" id="editId">
-                <div class="space-y-3">
-                    <input id="title" placeholder="Title" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none focus:border-pink-500">
-                    <select id="type" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
-                        <option>Movie</option><option>Web Series</option>
-                    </select>
-                    <input id="rating" type="number" placeholder="Rating (1-10)" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
-                    <input id="status" placeholder="Status (e.g. Watched)" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
-                    <input id="prequel" placeholder="Prequel" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
-                    <input id="nextDate" type="date" class="w-full bg-black/40 p-3 rounded-lg border border-white/10 outline-none">
+        <main class="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            
+            <section class="xl:col-span-1">
+                <div class="glass-panel p-8 rounded-3xl sticky top-8">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-terminal text-pink-500 mr-3"></i>Data Input
+                    </h2>
+                    
+                    <form id="mediaForm" class="space-y-4">
+                        <input type="hidden" id="editId">
+                        
+                        <div class="space-y-1">
+                            <label class="text-xs text-gray-500 uppercase tracking-widest">Title Name</label>
+                            <input id="title" class="w-full bg-black/50 p-4 rounded-xl border border-white/10 focus:border-pink-500 outline-none">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs text-gray-500 uppercase tracking-widest">Format</label>
+                                <select id="type" class="w-full bg-black/50 p-4 rounded-xl border border-white/10 outline-none">
+                                    <option>Movie</option><option>Web Series</option>
+                                </select>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs text-gray-500 uppercase tracking-widest">Rating</label>
+                                <input id="rating" type="number" class="w-full bg-black/50 p-4 rounded-xl border border-white/10 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="text-xs text-gray-500 uppercase tracking-widest">Status</label>
+                            <input id="status" class="w-full bg-black/50 p-4 rounded-xl border border-white/10 outline-none">
+                        </div>
+
+                        <button type="button" onclick="saveEntry()" id="saveBtn" class="w-full mt-8 bg-white text-black py-4 rounded-xl font-black text-lg hover:bg-gray-200 transition">
+                            EXECUTE LOG
+                        </button>
+                    </form>
                 </div>
-                <button onclick="saveEntry()" id="saveBtn" class="w-full mt-6 bg-white text-black py-3 rounded-lg font-bold hover:bg-gray-200 transition">SAVE ENTRY</button>
-            </div>
+            </section>
 
-            <div class="lg:col-span-3 glass p-6 rounded-2xl">
-                <table class="w-full text-left">
-                    <thead><tr class="text-gray-400 border-b border-white/10">
-                        <th class="p-4">Title</th><th class="p-4">Rating</th><th class="p-4">Status</th><th class="p-4">Date</th><th class="p-4">Action</th>
-                    </tr></thead>
-                    <tbody id="list"></tbody>
-                </table>
-            </div>
-        </div>
+            <section class="xl:col-span-3">
+                <div class="glass-panel rounded-3xl overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-white/5">
+                            <tr class="text-gray-400 text-xs uppercase tracking-widest">
+                                <th class="p-6">Title</th>
+                                <th class="p-6">Format</th>
+                                <th class="p-6">Rating</th>
+                                <th class="p-6">Status</th>
+                                <th class="p-6 text-right">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="list" class="divide-y divide-white/5">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
     </div>
 
     <script>
+        // Data Handling Logic
         let data = JSON.parse(localStorage.getItem('my_data')) || [];
 
-        function setTheme(c) { document.body.className = c + " min-h-screen text-white p-4 md:p-8"; }
+        function setTheme(c) { document.body.className = c + " min-h-screen text-white p-6 md:p-12"; }
 
         function saveEntry() {
             const id = document.getElementById('editId').value;
@@ -66,11 +120,11 @@
                 title: document.getElementById('title').value,
                 type: document.getElementById('type').value,
                 rating: document.getElementById('rating').value,
-                status: document.getElementById('status').value,
-                prequel: document.getElementById('prequel').value,
-                nextDate: document.getElementById('nextDate').value
+                status: document.getElementById('status').value
             };
             
+            if(!entry.title) { alert("Title is required"); return; }
+
             if(id) { data = data.map(i => i.id == id ? entry : i); } 
             else { data.push(entry); }
             
@@ -79,13 +133,18 @@
         }
 
         function render() {
-            document.getElementById('list').innerHTML = data.map(i => `
-                <tr class="border-b border-white/5 hover:bg-white/5 transition cursor-pointer" onclick="editEntry(${i.id})">
-                    <td class="p-4">${i.title}</td>
-                    <td class="p-4 text-pink-400">${i.rating || '-'}</td>
-                    <td class="p-4">${i.status || '-'}</td>
-                    <td class="p-4">${i.nextDate || '-'}</td>
-                    <td class="p-4 text-red-400 hover:text-red-300" onclick="event.stopPropagation(); del(${i.id})"><i class="fas fa-trash"></i></td>
+            const list = document.getElementById('list');
+            list.innerHTML = data.map(i => `
+                <tr class="hover:bg-white/5 transition group cursor-pointer" onclick="editEntry(${i.id})">
+                    <td class="p-6 font-bold text-lg">${i.title}</td>
+                    <td class="p-6 text-gray-400">${i.type}</td>
+                    <td class="p-6 text-pink-400">${i.rating}</td>
+                    <td class="p-6 text-gray-300">${i.status}</td>
+                    <td class="p-6 text-right">
+                        <button onclick="event.stopPropagation(); del(${i.id})" class="text-red-500 hover:text-red-300">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
                 </tr>
             `).join('');
         }
@@ -94,17 +153,17 @@
             const i = data.find(x => x.id == id);
             document.getElementById('editId').value = i.id;
             document.getElementById('title').value = i.title;
+            document.getElementById('type').value = i.type;
             document.getElementById('rating').value = i.rating;
             document.getElementById('status').value = i.status;
-            document.getElementById('prequel').value = i.prequel;
-            document.getElementById('nextDate').value = i.nextDate;
-            document.getElementById('saveBtn').innerText = "UPDATE ENTRY";
+            document.getElementById('saveBtn').innerText = "COMMIT UPDATE";
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function resetForm() {
             document.getElementById('editId').value = '';
-            document.getElementById('title').value = '';
-            document.getElementById('saveBtn').innerText = "SAVE ENTRY";
+            document.getElementById('mediaForm').reset();
+            document.getElementById('saveBtn').innerText = "EXECUTE LOG";
         }
 
         function del(id) {
