@@ -465,7 +465,7 @@
         tbody.appendChild(row);
     });
 }
-}
+
 
         function triggerExport() { if(logsData.length === 0) return; const blob = new Blob([JSON.stringify(logsData, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `CineLog_Ultimate_Master_Backup.json`; a.click(); }
         
