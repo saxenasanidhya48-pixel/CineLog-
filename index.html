@@ -494,7 +494,9 @@
             overlay.style.display = 'none';
         }, 400); 
     });
-
+document.getElementById('btn-yes').addEventListener('click', function() {
+    document.getElementById('gatekeeper-overlay').style.display = 'none';
+});
     document.getElementById('btn-no').addEventListener('click', function() {
         alert("🔒 Access Denied! Redirecting you to safety...");
         window.location.href = "https://www.google.com"; 
