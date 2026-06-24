@@ -253,28 +253,16 @@
                     </div>
                 </div>
 
-                <div class="w-full overflow-x-auto glass-panel border border-white/5 rounded-3xl shadow-2xl">
-                    <table class="w-full text-left border-collapse min-w-[1100px] text-xs">
-                        <thead>
-                            <tr class="border-b border-white/5 bg-black/30 text-white/60 font-semibold uppercase tracking-wider text-[10px]">
-                                <th class="py-4 px-4 w-14 text-center">Action</th>
-                                <th class="py-4 px-4">Media Title / Identity</th>
-                                <th class="py-4 px-4 w-20">Category</th>
-                                <th class="py-4 px-4 w-36">Genre Matrix</th>
-                                <th class="py-4 px-4 w-32">AI Evaluation</th>
-                                <th class="py-4 px-4 w-24">Watch Status</th>
-                                <th class="py-4 px-4 w-32">Watch Date</th>
-                                <th class="py-4 px-4 w-24">Platform</th>
-                                <th class="py-4 px-4 w-44">current status</th>
-                                <th class="py-4 px-4 w-36">Release Date new seson</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableEntriesBody" class="divide-y divide-white/5 text-white/90">
-                            </tbody>
-                    </table>
-                    <div id="emptyState" class="hidden text-center py-16 text-white/40 font-mono">⚠️ [Zero results matching tracking parameters]</div>
-                </div>
+            <div class="w-full glass-panel border border-white/5 rounded-3xl shadow-2xl p-6">
+        
+        <div id="tableEntriesBody" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             </div>
+
+        <div id="emptyState" class="hidden text-center py-16 text-white/40 font-mono">
+            ⚠️ [Zero results matching tracking parameters]
+        </div>
+        
+    </div>    
         </main>
     </div>
 
@@ -439,88 +427,80 @@
         }
 
         function renderDashboard() {
-            const tbody = document.getElementById('tableEntriesBody');
-            const emptyState = document.getElementById('emptyState');
-            const searchVal = document.getElementById('searchBar').value.toLowerCase();
+    const tbody = document.getElementById('tableEntriesBody');
+    const emptyState = document.getElementById('emptyState');
+    const searchVal = document.getElementById('searchBar').value.toLowerCase();
+    
+    if (!tbody) return;
 
-            let filtered = logsData.filter(item => 
-                (item.title.toLowerCase().includes(searchVal) || item.genre.toLowerCase().includes(searchVal) || (item.platform || '').toLowerCase().includes(searchVal)) && 
-                (activeFilter === 'All' ? true : item.status === activeFilter)
-            );
+    // Search aur Status filters ka combination matrix
+    let filtered = logsData.filter(item => 
+        (item.title.toLowerCase().includes(searchVal) || item.genre.toLowerCase().includes(searchVal) || (item.platform || '').toLowerCase().includes(searchVal)) &&
+        (activeFilter === 'All' ? true : item.status === activeFilter)
+    );
 
-            const watched = logsData.filter(x => x.status === 'Watched');
-            document.getElementById('statTotal').innerText = logsData.length;
-            document.getElementById('statTime').innerText = `${Math.round(watched.reduce((a, c) => a + (c.runtime || 0), 0) / 60)} hrs`;
+    // Stats calculations (Total entries aur total watch hours)
+    const watched = logsData.filter(x => x.status === 'Watched');
+    if(document.getElementById('statTotal')) document.getElementById('statTotal').innerText = logsData.length;
+    if(document.getElementById('statTime')) document.getElementById('statTime').innerText = `${Math.round(watched.reduce((a, c) => a + (c.runtime || 0), 0) / 60)} hrs`;
 
-            if(filtered.length === 0) { tbody.innerHTML = ""; emptyState.classList.remove('hidden'); return; }
-            emptyState.classList.add('hidden');
+    if (filtered.length === 0) {
+        tbody.innerHTML = "";
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+    if (emptyState) emptyState.classList.add('hidden');
 
-            tbody.innerHTML = filtered.map(item => {
-                const typeClass = item.type === 'Movie' ? 'bg-amber-400/10 text-amber-300 border border-amber-500/20' : 'bg-purple-400/10 text-purple-300 border border-purple-500/20';
-                const statusClass = item.status === 'Watched' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/5 text-white/40';
+    // Netflix Grid Cards Generation
+    tbody.innerHTML = filtered.map((item, index) => {
+        // Fallback poster mechanism
+        const posterUrl = (item.poster && item.poster.trim() !== '') ? item.poster : 'https://via.placeholder.com/300x450/11111b/313244?text=No+Poster';
+        
+        // Status indicator metrics
+        const isWatched = item.status === 'Watched';
+        const statusBadgeClass = isWatched ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+
+        return `
+            <div data-media-type="${item.type || ''}" class="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/5 bg-black/40 hover:border-pink-500/40 hover:shadow-[0_0_20px_rgba(236,72,153,0.15)] transition-all duration-300 flex flex-col h-[320px]">
                 
-                const plat = item.platform || 'Netflix';
-                let platClass = 'bg-red-500/10 text-red-300 border border-red-500/10';
-                if(plat === 'Disney+') platClass = 'bg-blue-600/20 text-blue-300 border border-blue-500/10';
-                if(plat === 'Amazon Prime') platClass = 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/10';
-                if(plat === 'JioCinema') platClass = 'bg-pink-500/20 text-pink-300 border border-pink-500/10';
-
-                let starText = "Not Rated";
-                if(item.rating === 10) starText = "<span class='text-pink-300'>★★★★★ Excellent</span>";
-                if(item.rating === 8) starText = "<span class='text-purple-300'>★★★★☆ Very Good</span>";
-                if(item.rating === 6) starText = "<span class='text-amber-300'>★★★☆☆ Good</span>";
-
-                const genreBadges = (item.genre || "Drama").split(',').map(g => {
-                    return `<span class="bg-black/40 text-white/80 px-2.5 py-1 rounded-full text-[10px] font-medium mr-1 border border-white/5 inline-block">${g.trim()}</span>`;
-                }).join('');
-
-                // FIXED IMAGE PARSER: Guaranteed to show image from the provided link
-                const posterImgHtml = (item.poster && item.poster.startsWith('http'))
-                    ? `<img src="${item.poster}" class="w-9 h-12 object-cover rounded-lg border border-white/10 shadow-md transition-transform hover:scale-150 hover:z-50" onerror="this.src='https://placehold.co/150x200/120814/ffffff?text=📽️'">`
-                    : `<div class="w-9 h-12 bg-black/40 rounded-lg border border-white/5 flex items-center justify-center text-white/30 text-[11px] font-mono">📽️</div>`;
-
-                const curStatus = item.currentStatus || '—';
-                const upSeason = item.upcomingSeason ? item.upcomingSeason.trim() : '';
-                
-                let curStatusHtml = '—';
-                if(curStatus !== '—') {
-                    let badgeColor = 'bg-slate-500/20 text-slate-300';
-                    if(curStatus === 'Ended' || curStatus === 'Series Ended') badgeColor = 'bg-amber-600/20 text-amber-300 border border-amber-500/10';
-                    if(curStatus === 'Ongoing') badgeColor = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/10';
-                    if(curStatus === 'In Production') badgeColor = 'bg-blue-500/20 text-blue-300 border border-blue-500/10';
+                <div class="relative w-full h-[220px] overflow-hidden bg-gray-900">
+                    <img src="${posterUrl}" alt="${item.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/300x450/11111b/313244?text=Image+Error'">
                     
-                    const appendText = upSeason ? ` <span class="text-[9px] opacity-90 text-white bg-white/15 px-2 py-0.5 rounded font-mono ml-1 border border-white/5">${upSeason}</span>` : '';
-                    curStatusHtml = `<div class="flex items-center flex-wrap gap-1"><span class="px-2.5 py-1 rounded-md text-[10px] font-medium ${badgeColor}">${curStatus}</span>${appendText}</div>`;
-                }
+                    <span class="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-pink-300 backdrop-blur-md border border-white/10 uppercase tracking-wider">
+                        ${item.type === 'Web Series' ? '📺 Series' : '🎬 Movie'}
+                    </span>
 
-                return `
-                    <tr class="hover:bg-white/5 group transition-all">
-                        <td class="py-3.5 px-4 text-center">
-                            <div class="flex gap-2 justify-center opacity-40 group-hover:opacity-100 transition-opacity">
-                                <button onclick="editEntry(${item.id})" class="text-pink-300 hover:text-white p-1"><i class="fa-solid fa-pen text-[11px]"></i></button>
-                                <button onclick="deleteEntry(${item.id})" class="text-white/40 hover:text-red-400 p-1"><i class="fa-solid fa-trash text-[11px]"></i></button>
-                            </div>
-                        </td>
-                        <td onclick="editEntry(${item.id})" class="py-3.5 px-4 font-bold text-white tracking-wide text-sm cursor-pointer hover:text-pink-300 transition-colors">
-                            <div class="flex items-center gap-3.5">
-                                ${posterImgHtml}
-                                <div>
-                                    <span class="block">${item.title}</span>
-                                    <span class="text-[10px] text-white/40 font-normal block mt-0.5">(${item.year})</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-medium ${typeClass}">${item.type}</span></td>
-                        <td class="py-3.5 px-4">${genreBadges}</td>
-                        <td class="py-3.5 px-4 font-medium">${starText}</td>
-                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full font-medium text-[10px] ${statusClass}">${item.status}</span></td>
-                        <td class="py-3.5 px-4 text-white/80 font-medium">${formatDateString(item.watchDate) || '—'}</td>
-                        <td class="py-3.5 px-4"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${platClass}">${plat}</span></td>
-                        <td class="py-3.5 px-4 font-medium">${curStatusHtml}</td>
-                        <td class="py-3.5 px-4 font-mono text-[11px] text-white/70">${formatDateString(item.releaseNewSeason) || '—'}</td>
-                    </tr>`;
-            }).join('');
-        }
+                    <span class="absolute bottom-2 left-2.5 text-[9px] font-bold px-2 py-0.5 rounded-md ${statusBadgeClass} backdrop-blur-md border uppercase tracking-wider">
+                        ${item.status || 'Plan to Watch'}
+                    </span>
+                </div>
+
+                <div class="p-3 flex flex-col justify-between flex-grow bg-gradient-to-b from-black/20 to-black/60">
+                    <div>
+                        <h4 class="text-white font-bold text-xs line-clamp-1 group-hover:text-pink-400 transition-colors" title="${item.title}">${item.title}</h4>
+                        <div class="flex items-center justify-between mt-1 text-[10px] text-gray-400 font-medium">
+                            <span>${item.year || 'N/A'}</span>
+                            <span class="text-amber-400 font-bold">★ ${item.rating || '0'}/10</span>
+                        </div>
+                        <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">${item.genre || 'No Genre Specified'}</p>
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-white/5">
+                        <span class="text-[9px] font-mono text-gray-500 tracking-tight truncate max-w-[65px]">${item.platform || '-'}</span>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="editEntry(${index})" class="p-1 rounded-md bg-white/5 hover:bg-pink-500/20 text-gray-400 hover:text-pink-300 transition-all" title="Edit Core">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
+                            <button onclick="deleteEntry(${index})" class="p-1 rounded-md bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-all" title="Expunge Data">
+                                <i class="fa-solid fa-trash text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
         function triggerExport() { if(logsData.length === 0) return; const blob = new Blob([JSON.stringify(logsData, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `CineLog_Ultimate_Master_Backup.json`; a.click(); }
         
