@@ -87,6 +87,11 @@
                 <input type="file" id="importFile" class="hidden" accept=".json" onchange="triggerImport(event)">
             </div>
         </div>
+        <div class="flex justify-center gap-4 my-6">
+            <button onclick="filterMedia('all')" id="filter-all" class="px-5 py-2 text-xs font-bold rounded-full bg-pink-500 text-white border border-pink-500 transition-all uppercase tracking-wider">All Section</button>
+            <button onclick="filterMedia('Movie')" id="filter-movie" class="px-5 py-2 text-xs font-bold rounded-full bg-white/5 text-pink-300 border border-white/10 hover:border-pink-500/50 transition-all uppercase tracking-wider">Movies</button>
+            <button onclick="filterMedia('Web Series')" id="filter-series" class="px-5 py-2 text-xs font-bold rounded-full bg-white/5 text-pink-300 border border-white/10 hover:border-pink-500/50 transition-all uppercase tracking-wider">Web Series</button>
+        </div>
 
         <header class="max-w-[95%] mx-auto pt-10 pb-6">
             <div class="flex items-center gap-5">
@@ -550,6 +555,41 @@
         alert("🔒 Access Denied! Redirecting you to safety...");
         window.location.href = "https://www.google.com"; 
     });
+     // Media Section Filter Logic (Movies vs Web Series)
+    window.filterMedia = function(type) {
+        const buttons = {
+            all: document.getElementById('filter-all'),
+            movie: document.getElementById('filter-movie'),
+            series: document.getElementById('filter-series')
+        };
+        
+        Object.values(buttons).forEach(btn => {
+            if(btn) {
+                btn.className = "px-5 py-2 text-xs font-bold rounded-full bg-white/5 text-pink-300 border border-white/10 hover:border-pink-500/50 transition-all uppercase tracking-wider";
+            }
+        });
+
+        const activeClass = "px-5 py-2 text-xs font-bold rounded-full bg-pink-500 text-white border border-pink-500 transition-all uppercase tracking-wider";
+
+        if(type === 'all' && buttons.all) buttons.all.className = activeClass;
+        if(type === 'Movie' && buttons.movie) buttons.movie.className = activeClass;
+        if(type === 'Web Series' && buttons.series) buttons.series.className = activeClass;
+
+        // CineLog media cards/rows ko dynamically filter karne ka logic
+        const elements = document.querySelectorAll('tbody tr, .grid > div, [data-media-type]'); 
+        elements.forEach(el => {
+            const elText = el.innerText || el.textContent || '';
+            const mediaTypeAttr = el.getAttribute('data-media-type') || '';
+            
+            if (type === 'all') {
+                el.style.display = '';
+            } else if (elText.includes(type) || mediaTypeAttr.includes(type)) {
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+    };   
     </script>
 </body>
 </html>
