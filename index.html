@@ -253,16 +253,19 @@
                     </div>
                 </div>
 
-            <div class="w-full glass-panel border border-white/5 rounded-3xl shadow-2xl p-6">
-        
-        <div id="tableEntriesBody" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            </div>
-
-        <div id="emptyState" class="hidden text-center py-16 text-white/40 font-mono">
-            ⚠️ [Zero results matching tracking parameters]
-        </div>
-        
-    </div>    
+           <table class="w-full text-left border-collapse">
+    <thead>
+        <tr class="text-gray-500 text-sm border-b border-white/10">
+            <th class="p-4">Title</th>
+            <th class="p-4">Type</th>
+            <th class="p-4">Status</th>
+            <th class="p-4">Platform</th>
+            <th class="p-4">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="tableEntriesBody">
+    </tbody>
+</table>
         </main>
     </div>
 
@@ -432,74 +435,36 @@
     const searchVal = document.getElementById('searchBar').value.toLowerCase();
     
     if (!tbody) return;
+    tbody.innerHTML = '';
 
-    // Search aur Status filters ka combination matrix
     let filtered = logsData.filter(item => 
         (item.title.toLowerCase().includes(searchVal) || item.genre.toLowerCase().includes(searchVal) || (item.platform || '').toLowerCase().includes(searchVal)) &&
         (activeFilter === 'All' ? true : item.status === activeFilter)
     );
 
-    // Stats calculations (Total entries aur total watch hours)
-    const watched = logsData.filter(x => x.status === 'Watched');
-    if(document.getElementById('statTotal')) document.getElementById('statTotal').innerText = logsData.length;
-    if(document.getElementById('statTime')) document.getElementById('statTime').innerText = `${Math.round(watched.reduce((a, c) => a + (c.runtime || 0), 0) / 60)} hrs`;
-
     if (filtered.length === 0) {
-        tbody.innerHTML = "";
         if (emptyState) emptyState.classList.remove('hidden');
         return;
+    } else {
+        if (emptyState) emptyState.classList.add('hidden');
     }
-    if (emptyState) emptyState.classList.add('hidden');
 
-    // Netflix Grid Cards Generation
-    tbody.innerHTML = filtered.map((item, index) => {
-        // Fallback poster mechanism
-        const posterUrl = (item.poster && item.poster.trim() !== '') ? item.poster : 'https://via.placeholder.com/300x450/11111b/313244?text=No+Poster';
-        
-        // Status indicator metrics
-        const isWatched = item.status === 'Watched';
-        const statusBadgeClass = isWatched ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-
-        return `
-            <div data-media-type="${item.type || ''}" class="group relative rounded-2xl overflow-hidden cursor-pointer border border-white/5 bg-black/40 hover:border-pink-500/40 hover:shadow-[0_0_20px_rgba(236,72,153,0.15)] transition-all duration-300 flex flex-col h-[320px]">
-                
-                <div class="relative w-full h-[220px] overflow-hidden bg-gray-900">
-                    <img src="${posterUrl}" alt="${item.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://via.placeholder.com/300x450/11111b/313244?text=Image+Error'">
-                    
-                    <span class="absolute top-2.5 right-2.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-black/60 text-pink-300 backdrop-blur-md border border-white/10 uppercase tracking-wider">
-                        ${item.type === 'Web Series' ? '📺 Series' : '🎬 Movie'}
-                    </span>
-
-                    <span class="absolute bottom-2 left-2.5 text-[9px] font-bold px-2 py-0.5 rounded-md ${statusBadgeClass} backdrop-blur-md border uppercase tracking-wider">
-                        ${item.status || 'Plan to Watch'}
-                    </span>
-                </div>
-
-                <div class="p-3 flex flex-col justify-between flex-grow bg-gradient-to-b from-black/20 to-black/60">
-                    <div>
-                        <h4 class="text-white font-bold text-xs line-clamp-1 group-hover:text-pink-400 transition-colors" title="${item.title}">${item.title}</h4>
-                        <div class="flex items-center justify-between mt-1 text-[10px] text-gray-400 font-medium">
-                            <span>${item.year || 'N/A'}</span>
-                            <span class="text-amber-400 font-bold">★ ${item.rating || '0'}/10</span>
-                        </div>
-                        <p class="text-[10px] text-gray-500 line-clamp-1 mt-0.5">${item.genre || 'No Genre Specified'}</p>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-2 mt-2 pt-2 border-t border-white/5">
-                        <span class="text-[9px] font-mono text-gray-500 tracking-tight truncate max-w-[65px]">${item.platform || '-'}</span>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="editEntry(${index})" class="p-1 rounded-md bg-white/5 hover:bg-pink-500/20 text-gray-400 hover:text-pink-300 transition-all" title="Edit Core">
-                                <i class="fa-solid fa-pen text-[10px]"></i>
-                            </button>
-                            <button onclick="deleteEntry(${index})" class="p-1 rounded-md bg-white/5 hover:bg-rose-500/20 text-gray-400 hover:text-rose-400 transition-all" title="Expunge Data">
-                                <i class="fa-solid fa-trash text-[10px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    filtered.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = "border-b border-white/5 hover:bg-white/5 transition-colors";
+        row.innerHTML = `
+            <td class="p-4 text-white font-medium">${item.title}</td>
+            <td class="p-4 text-gray-400">${item.type || '-'}</td>
+            <td class="p-4 text-gray-400">${item.status || '-'}</td>
+            <td class="p-4 text-gray-400">${item.platform || '-'}</td>
+            <td class="p-4">
+                <button onclick="editEntry(${index})" class="mr-3 text-pink-400 hover:text-pink-300"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="deleteEntry(${index})" class="text-rose-400 hover:text-rose-300"><i class="fa-solid fa-trash"></i></button>
+            </td>
         `;
-    }).join('');
+        tbody.appendChild(row);
+    });
+}
 }
 
         function triggerExport() { if(logsData.length === 0) return; const blob = new Blob([JSON.stringify(logsData, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `CineLog_Ultimate_Master_Backup.json`; a.click(); }
