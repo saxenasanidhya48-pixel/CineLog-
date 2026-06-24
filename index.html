@@ -118,7 +118,7 @@
 
         <main class="max-w-[95%] mx-auto grid grid-cols-1 xl:grid-cols-4 gap-8 mt-4">
             
-            <div id="inputFormContainer" class="xl:col-span-1 glass-panel rounded-3xl p-6 shadow-2xl h-fit">
+           <div id="inputFormContainer" class="xl:col-span-1 glass-panel rounded-3xl p-6 shadow-2xl sticky top-6 self-start max-h-[calc(100vh-3rem)] overflow-y-auto custom-scrollbar">
                 <div class="flex justify-between items-center mb-5">
                     <h2 id="formPanelTitle" class="text-xs font-bold text-pink-300 uppercase tracking-widest flex items-center gap-2">
                         <i class="fa-solid fa-circle-dot text-[10px] animate-pulse"></i> Manual Data Input Core
@@ -413,7 +413,6 @@
             document.getElementById('editIndicatorBadge').classList.remove('hidden');
             document.getElementById('submitBtn').innerText = "Apply Engine Fixes";
             
-            formContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function deleteEntry(id) {
